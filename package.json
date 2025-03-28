@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@nuxt/http": "^0.6.4",
     "@pinia/nuxt": "^0.10.1",
     "@tailwindcss/vite": "^4.0.15",
     "nuxt": "^3.16.1",

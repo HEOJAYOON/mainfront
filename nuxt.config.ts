@@ -33,4 +33,22 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
   ],
+
+   // 프록시 설정 추가
+   serverMiddleware: [
+    {
+      path: '/api',
+      handler: 'http-proxy-middleware',
+    }
+  ],
+  // proxy 설정
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://192.168.1.215:9090', // API 서버 주소
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })
