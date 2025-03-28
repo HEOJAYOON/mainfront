@@ -48,6 +48,7 @@ const isIconsLoaded = ref(false);
 // 헤더 로딩 상태
 const isLoaded = ref(false);
 
+
 // ✅ 화면 크기 변경 감지
 onMounted(() => {
   checkScreenSize();
@@ -99,6 +100,18 @@ const redirectToAuth = () => {
 
   window.location.href = authUrl;
 };
+
+//공지사항, 고객센터 페이지 이동
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const goNotice = () => {
+  router.push('/notice')
+}
+const goSupport = () => {
+  router.push('/support')
+}
+
 
 defineProps(["toggleMarketPlace", "toggleGuide", "goHome", "scrollToPlatformSection", "isMarketPlaceActive", "isGuideActive", "isPlatformActive" ]);
 </script>
@@ -368,6 +381,7 @@ defineProps(["toggleMarketPlace", "toggleGuide", "goHome", "scrollToPlatformSect
             class="action-btn ml-2"
             variant="text"
             color="#FFFFFF"
+            @click="goNotice"
           >
             공지사항
           </v-btn>
@@ -376,6 +390,7 @@ defineProps(["toggleMarketPlace", "toggleGuide", "goHome", "scrollToPlatformSect
             class="action-btn ml-2"
             variant="text"
             color="#FFFFFF"
+            @click="goSupport"
           >
             고객 센터
           </v-btn>
@@ -448,12 +463,12 @@ defineProps(["toggleMarketPlace", "toggleGuide", "goHome", "scrollToPlatformSect
           </v-btn>
         </v-list-item>
         <v-list-item>
-          <v-btn block class="sidebar-btn mb-2" variant="text">
+          <v-btn block class="sidebar-btn mb-2" variant="text" @click="goNotice; menuOpen = false">
             공지사항
           </v-btn>
         </v-list-item>
         <v-list-item>
-          <v-btn block class="sidebar-btn mb-2" variant="text">
+          <v-btn block class="sidebar-btn mb-2" variant="text" @click="goSupport; menuOpen = false">
             고객 센터
           </v-btn>
         </v-list-item>

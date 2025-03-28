@@ -1,16 +1,37 @@
 <template>
-    <div class="p-6">
-      <h1 class="text-2xl font-bold mb-4">공지사항</h1>
-      <NoticeList :notices="notices" />
+    <div>
+        <Header />
+        <div class="notice-page">
+            <h1>공지사항</h1>
+            <NoticeList />
+        </div>
     </div>
   </template>
   
-  <script setup>
-  import NoticeList from '@/components/notice/NoticeList.vue'
-  
-  // 임시 데이터 (나중에 API로 대체 가능)
-  const notices = [
-    { id: 1, title: '시스템 점검 안내', date: '2025-03-27' },
-    { id: 2, title: '신규 기능 업데이트', date: '2025-03-20' },
-  ]
+  <script setup lang="ts">
+  import Header from '~/components/main/Header.vue'
+  import NoticeList from '~/components/notice/NoticeList.vue'
   </script>
+  
+  <style scoped>
+  .notice-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  .notice-list {
+    list-style: none;
+    padding: 0;
+  }
+  .notice-item {
+    display: block;
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+    color: #2371B0;
+    text-decoration: none;
+  }
+  .notice-item:hover {
+    background: #f7f7f7;
+  }
+  </style>
+  
