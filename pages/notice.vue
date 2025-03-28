@@ -89,9 +89,11 @@
   // 공지사항 API 호출
   const fetchNoticeList = async () => {
     try {
-            console.log("API 호출 시작");
-            const { data, error } = await useAuthFetch("http://192.168.1.215:9090/api/v1/board/list/notice", { 
-            method: 'GET'
+        console.log("API 호출 시작");
+
+        // useFetch로 변경
+        const { data, error } = await useFetch("http://192.168.1.215:9090/api/v1/board/list/notice", { 
+        method: 'GET'
         });
 
         console.log("API 응답 데이터:", data); // 데이터 확인
@@ -103,11 +105,12 @@
         } else {
             noticeError.value = error; // 에러 처리
         }
-        } catch (error) {
-            noticeError.value = error;
-            console.error("API 호출 오류:", error); // 오류 메시지 출력
-        }
-    };
+    } catch (error) {
+        noticeError.value = error;
+        console.error("API 호출 오류:", error); // 오류 메시지 출력
+    }
+};
+
   
   // 페이지가 로드되면 공지사항 불러오기
   onMounted(() => {
