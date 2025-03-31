@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   devServer: {
     host: '0.0.0.0', // 외부 접근 허용
-    port: 3002 // 사용할 포트
+    port: 3000 // 사용할 포트
   },
   css: ['vuetify/styles'],
   build: {
@@ -33,22 +33,4 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
   ],
-
-   // 프록시 설정 추가
-   serverMiddleware: [
-    {
-      path: '/api',
-      handler: 'http-proxy-middleware',
-    }
-  ],
-  // proxy 설정
-  devServer: {
-    proxy: {
-      '/api': {
-        target: 'http://192.168.1.215:9090', // API 서버 주소
-        changeOrigin: true,
-        secure: false,
-      },
-    },
-  },
 })
