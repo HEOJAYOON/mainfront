@@ -1,7 +1,7 @@
 <template>
   <v-app>
-    <!-- 헤더 컴포넌트 -->
-    <Header 
+    <div class="background-container scrollable-theme">
+      <Header 
       :toggleMarketPlace="toggleMarketPlace" 
       :toggleGuide="toggleGuide" 
       :goHome="goHome"
@@ -10,18 +10,18 @@
       :isGuideActive="isGuideActive"
       :isPlatformActive="isPlatformActive"
     />
-    
+
     <!-- 공지사항 콘텐츠 -->
     <div class="notice-content">
+
       <h1>공지사항</h1>
 
-      <!-- 검색 박스와 게시물 수를 표시할 박스 -->
       <div v-if="!isLoading" class="search-box-container">
         <!-- 게시물 수 표시 -->
         <div class="notice-count">
           총 {{ filteredNotice.length }} 건의 게시물이 있습니다.
         </div>
-
+        <!-- 검색 박스 -->
         <v-text-field
           v-model="searchQuery" 
           label="제목으로 검색" 
@@ -32,7 +32,7 @@
       </div>
 
       <!-- 공지사항 테이블 본문 -->
-      <div v-if="filteredNotice.length">
+      <div>
         <table class="styled-table">
           <thead>
             <tr>
@@ -52,7 +52,7 @@
                 <v-expansion-panels v-if="isOpen[index]" multiple>
                   <v-expansion-panel>
                     <v-expansion-panel-content>
-                      <div class="content">{{ item.content }}</div> <!-- 게시물 내용 -->
+                      <div class="content">{{ item.content }}</div>
                     </v-expansion-panel-content>
                   </v-expansion-panel>
                 </v-expansion-panels>                
@@ -64,20 +64,23 @@
         </table>
       </div>
 
-      <!-- 페이지네이션 -->
-      <div class="pagination" v-if="filteredNotice.length">
-        <v-pagination v-model="page" :length="totalPages" @input="fetchNoticeList" />
-      </div>
+
     </div>
 
-    <!-- 푸터 -->
-    <Footer class="footer-fixed" />
+    <!-- 페이지네이션 -->
+    <div class="pagination">
+      <v-pagination v-model="page" :length="totalPages" @input="fetchNoticeList" />
+    </div>
+
+    <LazyFooter class="footer-fixed" />
+    </div>
+    
   </v-app>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { useAuthFetch } from '~/composables/useAuthFetch'; // 커스텀 훅
+import { useAuthFetch } from '~/composables/useAuthFetch';
 import Header from '@/components/main/Header.vue';
 import Footer from '@/components/main/Footer.vue';
 
@@ -97,6 +100,20 @@ const isOpen = ref<boolean[]>([]); // 게시물 열기/닫기 상태를 관리�
 const page = ref<number>(1);
 const totalPages = ref<number>(0);
 
+
+const isPlatformActive = ref(false);
+const toggleMarketPlace = ref(false);
+const toggleGuide = ref(false);
+const isMarketPlaceActive = ref(false);
+const isGuideActive = ref(false);
+const scrollToPlatformSection = ref(false);
+
+
+const goHome = () => {
+  isMarketPlaceActive.value = false;
+  isGuideActive.value = false;
+}
+  
 // 공지사항 API 호출
 const fetchNoticeList = async () => {
   try {
@@ -158,14 +175,37 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+/* 🌟 전체 컨테이너 */
+.background-container {
+  /* position: relative;
+  width: 100%; */
+  /* height: 100vh; */
+  /* height: auto;
+  min-height: 100vh; */
+  /* overflow: hidden !important; */
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: auto;
+}
 .notice-content {
   padding: 20px;
   padding-top: 120px;
   text-align: center;
+  overflow: auto;
 }
 
 .notice-content h1 {
-  margin-bottom: 20px; /* 아래쪽 여백 */
+  margin-bottom: 20px;
+}
+
+
+.content{
+  box-shadow: none;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #F6F6F6;
 }
 
 .search-box-container {
@@ -175,6 +215,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin: 0 15%;
 }
 
 .search-box-container input {
@@ -194,16 +235,17 @@ onMounted(() => {
 
 .styled-table {
   padding: 20px 30px 50px 30px;
-  margin: auto 15%;
+  margin: 0 15%;
   border-collapse: collapse;
-  table-layout: fixed; /* 고정된 레이아웃 */
+  table-layout: fixed; 
+  width: 70%;
 }
 
 .styled-table th, .styled-table td {
   padding: 10px;
   text-align: center;
   border-bottom: 1px solid #ddd;
-  word-wrap: break-word; /* 긴 단어 줄 바꿈 */
+  word-wrap: break-word; 
 }
 
 .styled-table th {
@@ -226,12 +268,12 @@ onMounted(() => {
 
 .styled-table td:nth-child(2),
 .styled-table th:nth-child(2) {
-  width: 70%; /* 두 번째 열 고정 너비 */
+  width: 60%; /* 두 번째 열 고정 너비 */
 }
 
 .styled-table td:nth-child(3),
 .styled-table th:nth-child(3) {
-  width: 20%; /* 세 번째 열 고정 너비 */
+  width: 15%; /* 세 번째 열 고정 너비 */
 }
 
 .styled-table td:nth-child(4),
@@ -239,10 +281,6 @@ onMounted(() => {
   width: 15%; /* 네 번째 열 고정 너비 */
 }
 
-.styled-table td:nth-child(5),
-.styled-table th:nth-child(5) {
-  width: 10%; /* 다섯 번째 열 고정 너비 */
-}
 
 .pagination {
   margin-top: 20px;
@@ -255,6 +293,5 @@ onMounted(() => {
   text-align: center;
   padding: 20px 0;
   bottom: 0;
-  left: 0;
 }
 </style>
