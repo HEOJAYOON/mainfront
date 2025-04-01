@@ -109,6 +109,14 @@ const totalPages = ref<number>(0);
 const isLoading = ref<boolean>(true); // 로딩 상태 변수
 const isOpen = ref<boolean[]>([]); // 게시물 열기/닫기 상태를 관리하는 배열
 
+
+const isPlatformActive = ref(false);  // 초기값 설정
+const toggleMarketPlace = ref(false); // 초기값 설정
+const toggleGuide = ref(false); // 초기값 설정
+const isMarketPlaceActive = ref(false); // 초기값 설정
+const isGuideActive = ref(false); // 초기값 설정
+
+
 const goHome = () => {
   isMarketPlaceActive.value = false;
   isGuideActive.value = false;
