@@ -38,6 +38,7 @@
   display: flex;
   justify-content: space-between; /* 양옆으로 요소들 배치 */
   padding: 0 20px; /* 좌우 여백 20px */
+  height: 200px;
 }
 
 .footer-logo, .footer-contact, .footer-tel-fax {
