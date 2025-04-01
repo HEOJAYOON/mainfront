@@ -40,7 +40,6 @@
               <th>제목</th>
               <th>등록일</th>
               <th>조회</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -51,7 +50,7 @@
                 <!-- 여기서 각 게시물에 대한 v-expansion-panels 추가 -->
                 <v-expansion-panels v-if="isOpen[index]" multiple>
                   <v-expansion-panel>
-                    <v-expansion-panel-content>
+                    <v-expansion-panel-content class="">
                       <div class="content">{{ item.content }}</div>
                     </v-expansion-panel-content>
                   </v-expansion-panel>
@@ -178,16 +177,11 @@ onMounted(() => {
 
 /* 🌟 전체 컨테이너 */
 .background-container {
-  /* position: relative;
-  width: 100%; */
-  /* height: 100vh; */
-  /* height: auto;
-  min-height: 100vh; */
-  /* overflow: hidden !important; */
   position: relative;
   width: 100%;
   height: 100vh;
   overflow: auto;
+  box-sizing: border-box;
 }
 .notice-content {
   padding: 20px;
@@ -200,6 +194,9 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
+.v-expansion-panel__shadow {
+  box-shadow: none;
+}
 
 .content{
   box-shadow: none;
@@ -268,17 +265,17 @@ onMounted(() => {
 
 .styled-table td:nth-child(2),
 .styled-table th:nth-child(2) {
-  width: 60%; /* 두 번째 열 고정 너비 */
+  width: 70%; /* 두 번째 열 고정 너비 */
 }
 
 .styled-table td:nth-child(3),
 .styled-table th:nth-child(3) {
-  width: 15%; /* 세 번째 열 고정 너비 */
+  width: 10%; /* 세 번째 열 고정 너비 */
 }
 
 .styled-table td:nth-child(4),
 .styled-table th:nth-child(4) {
-  width: 15%; /* 네 번째 열 고정 너비 */
+  width: 10%; /* 네 번째 열 고정 너비 */
 }
 
 
