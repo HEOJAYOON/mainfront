@@ -58,25 +58,55 @@
 
             <!-- 고객센터 탭 -->
             <v-window-item value="support">
-              <div class="text-center mb-6">
+              <!-- 버튼 필터 -->
+              <div class="text-center mb-4">
                 <v-btn-toggle v-model="supportTab" color="primary" group>
                   <v-btn v-for="tab in supportTabs" :key="tab" :value="tab">
                     {{ tab }}
                   </v-btn>
                 </v-btn-toggle>
               </div>
-              <v-list>
-                <v-list-item
-                  v-for="(item, index) in filteredSupportList"
-                  :key="index"
-                >
-                  <v-list-item-content>{{ item.title }}</v-list-item-content>
-                </v-list-item>
-              </v-list>
-              <div v-if="filteredSupportList.length === 0" class="text-center">
-                등록된 내용이 없습니다.
+
+              <!-- 검색창 -->
+              <div class="search-container">
+                <v-text-field
+                  v-model="supportSearchQuery"
+                  label="제목으로 검색"
+                  append-icon="mdi-magnify"
+                  clearable
+                  density="compact"
+                  hide-details
+                />
               </div>
+
+              <!-- 리스트 -->
+              <v-expansion-panels multiple>
+                <v-expansion-panel
+                  v-for="(item, index) in pagedSupport"
+                  :key="item.bid"
+                >
+                  <v-expansion-panel-title>
+                    <div class="d-flex justify-space-between w-100">
+                      <small>{{ totalSupportFiltered - ((supportPage - 1) * supportPageSize + index) }}</small>
+                      <span>{{ item.title }}</span>
+                      <small>{{ formatDate(item.regDate) }} / 조회수 {{ item.viewCnt }}</small>
+                    </div>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
+                    <div v-html="item.content" class="pa-4" />
+                  </v-expansion-panel-text>
+                </v-expansion-panel>
+              </v-expansion-panels>
+
+              <!-- 빈 리스트 처리 -->
+              <div v-if="pagedSupport.length === 0" class="text-center mt-6">
+                해당 검색어에 맞는 내용이 없습니다.
+              </div>
+
+              <!-- 페이징 -->
+              <v-pagination v-model="supportPage" :length="totalSupportPages" class="mt-8" />
             </v-window-item>
+
           </v-window>
         </v-container>
       </div>
@@ -138,6 +168,32 @@ const totalFiltered = computed(() => filteredAndSorted.value.length)
 const totalPages = computed(() => Math.ceil(totalFiltered.value / pageSize))
 const pagedNotices = computed(() => filteredAndSorted.value.slice((page.value - 1) * pageSize, page.value * pageSize))
 
+const supportSearchQuery = ref('')
+const supportPage = ref(1)
+const supportPageSize = 10
+
+const filteredAndSortedSupport = computed(() => {
+  const query = supportSearchQuery.value.trim().toLowerCase()
+  return supportTab.value === '전체'
+    ? supportList.value
+        .filter(item => item.title.toLowerCase().includes(query))
+        .sort((a, b) => new Date(b.regDate).getTime() - new Date(a.regDate).getTime())
+    : supportList.value
+        .filter(item => item.brackets === supportTab.value && item.title.toLowerCase().includes(query))
+        .sort((a, b) => new Date(b.regDate).getTime() - new Date(a.regDate).getTime())
+})
+
+const totalSupportFiltered = computed(() => filteredAndSortedSupport.value.length)
+const totalSupportPages = computed(() => Math.ceil(totalSupportFiltered.value / supportPageSize))
+const pagedSupport = computed(() => filteredAndSortedSupport.value.slice((supportPage.value - 1) * supportPageSize, supportPage.value * supportPageSize))
+
+watch(supportSearchQuery, () => supportPage.value = 1)
+
+onMounted(() => {
+  fetchNoticeList()
+  fetchSupportList()
+})
+
 watch(searchQuery, () => page.value = 1)
 
 const supportTab = ref('전체')
@@ -168,7 +224,10 @@ const filteredSupportList = computed(() =>
     : supportList.value.filter(item => item.brackets === supportTab.value)
 )
 
-onMounted(fetchNoticeList)
+onMounted(() => {
+  fetchNoticeList()
+  fetchSupportList()
+})
 </script>
 
 <style scoped>
