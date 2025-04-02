@@ -13,7 +13,7 @@ definePageMeta({
 
 <style>
 html, body {
-  overflow: hidden !important;
+  overflow: auto !important;
 }
 
 .scrollable-theme::-webkit-scrollbar {

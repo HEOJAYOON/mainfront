@@ -266,10 +266,6 @@ const goHome = () => {
   box-sizing: border-box;
 }
 
-.v-application {
-  overflow-y: auto !important;
-}
-
 .search-container {
   max-width: 400px;
   margin: 20px auto;
