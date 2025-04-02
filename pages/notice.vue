@@ -29,6 +29,12 @@
 
           <!-- 검색어 있을 때 통합 결과 -->
           <template v-if="globalSearchQuery">
+            <div class="text-center font-weight-medium my-4">
+              <span>
+                <strong>‘{{ globalSearchQuery }}’</strong>로 검색한 결과
+                <strong>{{ combinedList.length }}</strong>건
+              </span>
+            </div>
             <v-expansion-panels multiple>
               <v-expansion-panel
                 v-for="(item, index) in pagedCombinedList"
