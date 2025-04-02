@@ -9,71 +9,71 @@
       :isMarketPlaceActive="isMarketPlaceActive"
       :isGuideActive="isGuideActive"
       :isPlatformActive="isPlatformActive"
-    />
+      />
 
     <!-- 공지사항 콘텐츠 -->
-    <div class="notice-content">
+      <div class="notice-content">
 
-      <h1>공지사항</h1>
+        <h1>공지사항</h1>
 
-      <div v-if="!isLoading" class="search-box-container">
-        <!-- 게시물 수 표시 -->
-        <div class="notice-count">
-          총 {{ filteredNotice.length }} 건의 게시물이 있습니다.
+        <div v-if="!isLoading" class="search-box-container">
+          <!-- 게시물 수 표시 -->
+          <div class="notice-count">
+            총 {{ filteredNotice.length }} 건의 게시물이 있습니다.
+          </div>
+          <!-- 검색 박스 -->
+          <v-text-field
+            v-model="searchQuery" 
+            label="제목으로 검색" 
+            @input="filterNotices" 
+            append-icon="mdi-magnify"
+            clearable
+            class="search-input"
+          />
         </div>
-        <!-- 검색 박스 -->
-        <v-text-field
-          v-model="searchQuery" 
-          label="제목으로 검색" 
-          @input="filterNotices" 
-          append-icon="mdi-magnify"
-          clearable
-        />
+
+        <!-- 공지사항 테이블 본문 -->
+        <div>
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>등록일</th>
+                <th>조회</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in sortedNotice" :key="item.id">
+                <td>{{ sortedNotice.length - index }}</td> <!-- 번호 내림차순 -->
+                <td @click="toggleContent(index)" style="cursor: pointer;">
+                  {{ item.title }}
+                  <!-- 여기서 각 게시물에 대한 v-expansion-panels 추가 -->
+                  <v-expansion-panels v-if="isOpen[index]" multiple>
+                    <v-expansion-panel>
+                      <v-expansion-panel-content>
+                        <div class="content">{{ item.content }}</div>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>                
+                </td>
+                <td>{{ formatDate(item.regDate) }}</td>
+                <td>{{ item.viewCnt }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <!-- 공지사항 테이블 본문 -->
-      <div>
-        <table class="styled-table">
-          <thead>
-            <tr>
-              <th>번호</th>
-              <th>제목</th>
-              <th>등록일</th>
-              <th>조회</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in sortedNotice" :key="item.id">
-              <td>{{ sortedNotice.length - index }}</td> <!-- 번호 내림차순 -->
-              <td @click="toggleContent(index)" style="cursor: pointer;">
-                {{ item.title }}
-                <!-- 여기서 각 게시물에 대한 v-expansion-panels 추가 -->
-                <v-expansion-panels v-if="isOpen[index]" multiple>
-                  <v-expansion-panel>
-                    <v-expansion-panel-content class="">
-                      <div class="content">{{ item.content }}</div>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-                </v-expansion-panels>                
-              </td>
-              <td>{{ formatDate(item.regDate) }}</td>
-              <td>{{ item.viewCnt }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- 페이지네이션 -->
+      <div class="pagination">
+        <v-pagination v-model="page" :length="totalPages" @input="fetchNoticeList" />
       </div>
 
-
-    </div>
-
-    <!-- 페이지네이션 -->
-    <div class="pagination">
-      <v-pagination v-model="page" :length="totalPages" @input="fetchNoticeList" />
-    </div>
-
-    <LazyFooter class="footer-fixed" />
+      <LazyFooter class="footer-fixed" />
     </div>
     
+
   </v-app>
 </template>
 
@@ -208,7 +208,7 @@ onMounted(() => {
 .search-box-container {
   padding: 10px;
   border-radius: 8px;
-  text-align: right;
+  text-align: left;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -280,7 +280,7 @@ onMounted(() => {
 
 
 .pagination {
-  margin-top: 20px;
+  margin: 20px;
 }
 
 .footer-fixed {
@@ -289,6 +289,7 @@ onMounted(() => {
   color: white;
   text-align: center;
   padding: 20px 0;
-  bottom: 0;
+  position: relative;
 }
+
 </style>
