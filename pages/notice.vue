@@ -2,16 +2,16 @@
   <v-app>
     <div class="background-container">
       <Header
-        :toggleMarketPlace="toggleMarketPlace"
-        :toggleGuide="toggleGuide"
+        :toggleMarketPlace="ui.toggleMarketPlace"
+        :toggleGuide="ui.toggleGuide"
         :goHome="goHome"
-        :scrollToPlatformSection="scrollToPlatformSection"
-        :isMarketPlaceActive="isMarketPlaceActive"
-        :isGuideActive="isGuideActive"
-        :isPlatformActive="isPlatformActive"
+        :scrollToPlatformSection="ui.scrollToPlatformSection"
+        :isMarketPlaceActive="ui.isMarketPlaceActive"
+        :isGuideActive="ui.isGuideActive"
+        :isPlatformActive="ui.isPlatformActive"
       />
 
-      <div v-if="!isMarketPlaceActive && !isGuideActive" class="main-container">
+      <div v-if="!ui.isMarketPlaceActive && !ui.isGuideActive" class="main-container">
         <v-container>
           <h1 class="text-center">고객센터</h1>
 
@@ -104,7 +104,7 @@
                 <!-- 리스트 -->
                 <v-expansion-panels multiple>
                   <v-expansion-panel
-                    v-for="(item, index) in pagedSupport"
+                    v-for="item in pagedSupport"
                     :key="item.bid"
                   >
                     <v-expansion-panel-title>
@@ -137,13 +137,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useAuthFetch } from '~/composables/useAuthFetch'
 
+// UI 상태를 하나의 reactive 객체로 묶음
+const ui = reactive({
+  isPlatformActive: false,
+  isMarketPlaceActive: false,
+  isGuideActive: false,
+  toggleMarketPlace: false,
+  toggleGuide: false,
+  scrollToPlatformSection: false,
+})
+
+// 메인 탭과 검색어
 const mainTab = ref('notice')
 const globalSearchQuery = ref('')
 
-// 공지사항
+// 검색어를 미리 가공(소문자, 양쪽 공백 제거)하여 재사용
+const searchQuery = computed(() => globalSearchQuery.value.toLowerCase().trim())
+
+// ── 공지사항 (Notice) ──────────────────────────────
 interface NoticeItem {
   id: string
   title: string
@@ -155,15 +169,16 @@ const notice = ref<NoticeItem[]>([])
 const page = ref(1)
 const pageSize = 10
 
-const filteredNotices = computed(() => {
-  const q = globalSearchQuery.value.toLowerCase().trim()
-  return notice.value.filter(n => n.title.toLowerCase().includes(q))
-})
+const filteredNotices = computed(() =>
+  notice.value.filter(n => n.title.toLowerCase().includes(searchQuery.value))
+)
 const totalFiltered = computed(() => filteredNotices.value.length)
 const totalPages = computed(() => Math.ceil(totalFiltered.value / pageSize))
-const pagedNotices = computed(() => filteredNotices.value.slice((page.value - 1) * pageSize, page.value * pageSize))
+const pagedNotices = computed(() =>
+  filteredNotices.value.slice((page.value - 1) * pageSize, page.value * pageSize)
+)
 
-// 고객센터
+// ── 고객센터 (Support) ──────────────────────────────
 interface SupportItem {
   bid: number
   title: string
@@ -178,71 +193,69 @@ const supportTabs = ['전체', '지도', '데이터', '기능', '회원가입 �
 const supportPage = ref(1)
 const supportPageSize = 10
 
-const filteredSupport = computed(() => {
-  const q = globalSearchQuery.value.toLowerCase().trim()
-  return supportList.value
-    .filter(item =>
-      (supportTab.value === '전체' || item.brackets === supportTab.value) &&
-      item.title.toLowerCase().includes(q)
-    )
-})
+const filteredSupport = computed(() =>
+  supportList.value.filter(item =>
+    (supportTab.value === '전체' || item.brackets === supportTab.value) &&
+    item.title.toLowerCase().includes(searchQuery.value)
+  )
+)
 const totalSupportFiltered = computed(() => filteredSupport.value.length)
 const totalSupportPages = computed(() => Math.ceil(totalSupportFiltered.value / supportPageSize))
-const pagedSupport = computed(() => filteredSupport.value.slice((supportPage.value - 1) * supportPageSize, supportPage.value * supportPageSize))
+const pagedSupport = computed(() =>
+  filteredSupport.value.slice((supportPage.value - 1) * supportPageSize, supportPage.value * supportPageSize)
+)
 
-// 통합 검색
+// ── 통합 검색 (Combined List) ──────────────────────────────
 const combinedPage = ref(1)
 const combinedPageSize = 10
 const combinedList = computed(() => {
-  const q = globalSearchQuery.value.toLowerCase().trim()
   const noticeMapped = notice.value
-    .filter(n => n.title.toLowerCase().includes(q))
+    .filter(n => n.title.toLowerCase().includes(searchQuery.value))
     .map(n => ({ ...n, type: '공지사항' }))
   const supportMapped = supportList.value
-    .filter(s => s.title.toLowerCase().includes(q))
+    .filter(s => s.title.toLowerCase().includes(searchQuery.value))
     .map(s => ({ ...s, type: '자주 묻는 질문' }))
   return [...noticeMapped, ...supportMapped].sort((a, b) => new Date(b.regDate).getTime() - new Date(a.regDate).getTime())
 })
 const totalCombinedPages = computed(() => Math.ceil(combinedList.value.length / combinedPageSize))
-const pagedCombinedList = computed(() => combinedList.value.slice((combinedPage.value - 1) * combinedPageSize, combinedPage.value * combinedPageSize))
+const pagedCombinedList = computed(() =>
+  combinedList.value.slice((combinedPage.value - 1) * combinedPageSize, combinedPage.value * combinedPageSize)
+)
 
+// 검색어 변경 시 페이지 초기화
 watch(globalSearchQuery, () => {
   page.value = 1
   supportPage.value = 1
   combinedPage.value = 1
 })
 
-// 공통
+// ── 공통 헬퍼 ──────────────────────────────
 const formatDate = (d: string) => {
   const date = new Date(d)
-  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+  return `${date.getFullYear()}-${(date.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
 }
 
-const fetchNoticeList = async () => {
-  const { data } = await useAuthFetch("http://192.168.1.215:9090/api/v1/board/list/notice")
-  notice.value = data || []
-}
-const fetchSupportList = async () => {
-  const { data } = await useAuthFetch("http://192.168.1.215:9090/api/v1/board/list/fna")
-  supportList.value = data || []
+// API 호출을 병렬로 처리하여 데이터 가져오기
+const fetchData = async () => {
+  const [noticeRes, supportRes] = await Promise.all([
+    useAuthFetch("http://192.168.1.215:9090/api/v1/board/list/notice"),
+    useAuthFetch("http://192.168.1.215:9090/api/v1/board/list/fna")
+  ])
+  notice.value = noticeRes.data || []
+  supportList.value = supportRes.data || []
 }
 
-onMounted(() => {
-  fetchNoticeList()
-  fetchSupportList()
-})
+onMounted(fetchData)
 
-const isPlatformActive = ref(false)
-const toggleMarketPlace = ref(false)
-const toggleGuide = ref(false)
-const isMarketPlaceActive = ref(false)
-const isGuideActive = ref(false)
-const scrollToPlatformSection = ref(false)
+// 홈 이동 시 마켓플레이스 및 가이드 상태 리셋
 const goHome = () => {
-  isMarketPlaceActive.value = false
-  isGuideActive.value = false
+  ui.isMarketPlaceActive = false
+  ui.isGuideActive = false
 }
 </script>
+
 <style scoped>
 .background-container {
   display: flex;
@@ -255,12 +268,11 @@ const goHome = () => {
   width: 90%;
   max-width: 1200px;
   margin: 80px auto 0;
-  background-color: white;
-}
+  height: }
 
 .footer-fixed {
-  flex-shrink: 0;
   height: 200px;
+  flex-shrink: 0;
   padding: 20px 0;
   text-align: center;
   box-sizing: border-box;
@@ -271,6 +283,9 @@ const goHome = () => {
   margin: 20px auto;
 }
 
+::v-deep .v-expansion-panel--active .v-expansion-panel-title {
+  background-color: #f0f0f0;
+}
 .custom-tabs {
   background: transparent !important;
 }
@@ -315,5 +330,8 @@ const goHome = () => {
   border-color: #1740C2;
 }
 
+.v-footer {
+  flex:block;
+}
 
 </style>

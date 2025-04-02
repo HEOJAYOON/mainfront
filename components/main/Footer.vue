@@ -1,5 +1,5 @@
 <template>
-  <v-footer class="pa-10" color="grey-darken-4">
+  <v-footer class="custom-footer pa-10" color="grey-darken-4">
     <v-container>
       <!-- 상단 정보 영역 -->
       <v-row class="mb-6" dense>
@@ -31,14 +31,28 @@
 
       <!-- 하단 링크 및 저작권 -->
       <v-row align="center" justify="space-between">
-        <v-col cols="12" md="6" >
-          <v-btn variant="text" >개인정보정책</v-btn>
-          <v-btn variant="text" >이용약관</v-btn>
+        <v-col cols="12" md="6">
+          <v-btn variant="text">개인정보정책</v-btn>
+          <v-btn variant="text">이용약관</v-btn>
         </v-col>
-        <v-col cols="12" md="6" >
+        <v-col cols="12" md="6">
           © 2023 copyright EGIS
         </v-col>
       </v-row>
     </v-container>
   </v-footer>
 </template>
+
+<script setup lang="ts">
+// 별도의 스크립트 로직이 필요하다면 추가합니다.
+</script>
+
+<style scoped>
+.custom-footer {
+  height: 200px !important;
+  min-height: 200px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+</style>
