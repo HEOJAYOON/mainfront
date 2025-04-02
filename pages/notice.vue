@@ -14,7 +14,7 @@
       <div v-if="!isMarketPlaceActive && !isGuideActive" class="main-container">
         <v-container>
           <h1 class="text-center mt-6 mb-6">고객센터</h1>
-          <v-tabs v-model="mainTab" bg-color="primary" dark fixed-tabs>
+          <v-tabs v-model="mainTab" class="custom-tabs" fixed-tabs>
             <v-tab value="notice">공지사항</v-tab>
             <v-tab value="support">자주 묻는 질문</v-tab>
           </v-tabs>
@@ -23,13 +23,16 @@
             <!-- 공지사항 탭 -->
             <v-window-item value="notice">
               
-              <v-text-field
-                v-model="searchQuery"
-                label="제목으로 검색"
-                append-icon="mdi-magnify"
-                clearable
-                class="mb-6"
-              />
+              <div class="search-container">
+                <v-text-field
+                  v-model="searchQuery"
+                  label="제목으로 검색"
+                  append-icon="mdi-magnify"
+                  clearable
+                  density="compact"
+                  hide-details
+                />
+              </div>
               <v-expansion-panels multiple>
                 <v-expansion-panel
                   v-for="(item, index) in pagedNotices"
@@ -181,6 +184,7 @@ onMounted(fetchNoticeList)
   max-width: 1200px;
   margin: 80px auto 0;
   background-color: white;
+  height: 100%;
 }
 
 .footer-fixed {
@@ -191,8 +195,35 @@ onMounted(fetchNoticeList)
   box-sizing: border-box;
 }
 .v-application {
-  height: auto !important;      /* 자동 높이 설정으로 콘텐츠에 따라 늘어나게 설정 */
-  overflow: visible !important; /* 숨김 처리된 스크롤 활성화 */
+  overflow-y: auto;
+}
+
+.custom-tabs {
+  background: transparent !important;
+}
+
+.custom-tabs .v-tab {
+  color: #555; /* 탭 글자 색상 */
+  background-color: transparent !important;
+  border-radius: 0 !important;
+}
+
+.custom-tabs .v-tab--selected {
+  color: #1976D2; /* 선택된 탭 글자 색상 (primary 컬러) */
+}
+
+.custom-tabs .v-slide-group__content {
+  border-bottom: 1px solid #e0e0e0; /* 전체 탭 하단 경계선 */
+}
+
+.custom-tabs .v-tabs-slider {
+  height: 3px !important; /* 선택된 탭 아래 밑줄 두께 */
+  background-color: #1976D2 !important; /* 밑줄 색상 */
+}
+
+.search-container {
+  max-width: 400px; /* 원하는 너비로 조정 가능 */
+  margin: 30px auto;   /* 가운데 정렬 */
 }
 
 </style>
