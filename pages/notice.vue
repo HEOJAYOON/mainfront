@@ -52,11 +52,6 @@
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
-
-            <div v-if="pagedCombinedList.length === 0" class="text-center mt-6">
-              해당 검색어에 맞는 결과가 없습니다.
-            </div>
-
             <v-pagination v-model="combinedPage" :length="totalCombinedPages" class="mt-8" />
           </template>
 
@@ -87,9 +82,6 @@
                     </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
-                <div v-if="pagedNotices.length === 0" class="text-center mt-6">
-                  해당 검색어에 맞는 공지사항이 없습니다.
-                </div>
                 <v-pagination v-model="page" :length="totalPages" class="mt-8" />
               </v-window-item>
 
@@ -130,9 +122,8 @@
 
                 <!-- 빈 리스트 처리 -->
                 <div v-if="pagedSupport.length === 0" class="text-center mt-6">
-                  해당 검색어에 맞는 내용이 없습니다.
+                  표시할 내용이 없습니다.
                 </div>
-
                 <!-- 페이징 -->
                 <v-pagination v-model="supportPage" :length="totalSupportPages" class="mt-8" />
               </v-window-item>
@@ -252,7 +243,6 @@ const goHome = () => {
   isGuideActive.value = false
 }
 </script>
-
 <style scoped>
 .background-container {
   display: flex;
@@ -266,7 +256,6 @@ const goHome = () => {
   max-width: 1200px;
   margin: 80px auto 0;
   background-color: white;
-  height: 100%;
 }
 
 .footer-fixed {
@@ -278,7 +267,7 @@ const goHome = () => {
 }
 
 .v-application {
-  overflow-y: auto;
+  overflow-y: auto !important;
 }
 
 .search-container {
@@ -329,4 +318,6 @@ const goHome = () => {
   color: white;
   border-color: #1740C2;
 }
+
+
 </style>
