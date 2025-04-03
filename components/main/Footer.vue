@@ -54,14 +54,13 @@
         </v-col>
 
         <!-- 3. CSAP 인증 로고 영역 -->
-        <v-col cols="12" md="2" class="d-flex align-center justify-center">
+        <v-col cols="12" md="2" class="csap-logo-col d-flex align-center justify-center">
           <img
             src="/image/footer/csap-badge.png"
             alt="CSAP 인증"
             height="60px"
           />
         </v-col>
-
       </v-row>
 
       <v-divider color="grey-lighten-1"></v-divider>
@@ -86,13 +85,8 @@
 </script>
 
 <style scoped>
-
-.container{
-  padding: 12px;
-}
-
 .custom-footer {
-  height: 200px !important;
+  height: 200px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -126,7 +120,6 @@
   height: 30px;
 }
 
-/* 새로 추가: 중간 영역(주소 및 연락처) 컨테이너 */
 .middle-col-container {
   display: flex;
   flex-direction: column;
@@ -154,5 +147,26 @@
 
 .info-text {
   flex: 1;
+}
+
+/* 반응형 조정 */
+@media (max-width: 600px) {
+  .custom-footer {
+    height: auto; /* 모바일에서는 높이를 내용에 맞게 */
+    padding: 20px 0;
+  }
+  /* 모바일에서는 내부 컨테이너의 flex 방향을 column으로 변경해서 수직 배치를 기본으로 할 수 있습니다. */
+  .left-col-container,
+  .middle-col-container {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  /* 필요에 따라 폰트 사이즈나 간격 조정 */
+  .info-group {
+    margin: 5px 0;
+  }
+  .csap-logo-col {
+    justify-content: flex-end !important;
+  }  
 }
 </style>
