@@ -55,11 +55,13 @@
 
         <!-- 3. CSAP 인증 로고 영역 -->
         <v-col cols="12" md="2" class="csap-logo-col d-flex align-center justify-center">
-          <img
-            src="/image/footer/csap-badge.png"
-            alt="CSAP 인증"
-            height="60px"
-          />
+          <a href="https://isms.kisa.or.kr/main/csap/intro/index.jsp" target="_blank">
+            <img
+              src="/image/footer/csap-badge.png"
+              alt="CSAP 인증"
+              height="60px"
+            />
+</a>
         </v-col>
       </v-row>
 
@@ -81,7 +83,6 @@
 </template>
 
 <script setup lang="ts">
-  // 필요한 스크립트 로직이 있다면 추가합니다.
 </script>
 
 <style scoped>
