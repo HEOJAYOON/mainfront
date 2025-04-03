@@ -74,7 +74,7 @@
                       <div class="d-flex justify-space-between w-100">
                         <small>{{ totalFiltered - ((page - 1) * pageSize + index) }}</small>
                         <span>{{ item.title }}</span>
-                        <small>{{ formatDate(item.regDate) }} / 조회수 {{ item.viewCnt }}</small>
+                        <small>{{ formatDate(item.regDate) }} | 조회수 {{ item.viewCnt }}</small>
                       </div>
                     </v-expansion-panel-title>
                     <v-expansion-panel-text>
@@ -87,19 +87,17 @@
 
               <!-- 고객센터 탭 -->
               <v-window-item value="support">
-                <!-- 버튼 필터 -->
-                <div class="text-center mb-4">
-                  <v-btn-toggle v-model="supportTab" class="custom-toggle" group>
-                    <v-btn 
-                      v-for="tab in supportTabs"
-                      :key="tab"
-                      :value="tab"
-                      class="custom-tab-btn"
-                    >
-                      {{ tab }}
-                    </v-btn>
-                  </v-btn-toggle>
-                </div>
+              <!-- 버튼 필터 -->
+              <div class="custom-toggle">
+                <v-btn
+                  v-for="tab in supportTabs"
+                  :key="tab"
+                  @click="supportTab = tab"
+                  :class="['custom-tab-btn', { 'active-tab': supportTab === tab }]"
+                >
+                  {{ tab }}
+                </v-btn>
+              </div>
 
                 <!-- 리스트 -->
                 <v-expansion-panels multiple>
@@ -111,10 +109,10 @@
                       <div class="d-flex justify-space-between w-100">
                         <small>Q</small>
                         <span>{{ item.title }}</span>
-                        <small>{{ formatDate(item.regDate) }} / 조회수 {{ item.viewCnt }}</small>
+                        <small>{{ formatDate(item.regDate) }} | 조회수 {{ item.viewCnt }}</small>
                       </div>
                     </v-expansion-panel-title>
-                    <v-expansion-panel-text>
+                    <v-expansion-panel-text>A 
                       <div v-html="item.content" class="pa-4" />
                     </v-expansion-panel-text>
                   </v-expansion-panel>
@@ -258,6 +256,8 @@ const goHome = () => {
 
 <style scoped>
 .background-container {
+  flex: 1; /* 얘만 있으면 돼 */
+  width: 100%;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -265,10 +265,10 @@ const goHome = () => {
 
 .main-container {
   flex: 1;
-  width: 90%;
+  width: 100%;
   max-width: 1200px;
-  margin: 80px auto 0;
-  height: }
+  margin: 80px auto 100px;
+}
 
 .footer-fixed {
   height: 200px;
@@ -276,6 +276,7 @@ const goHome = () => {
   padding: 20px 0;
   text-align: center;
   box-sizing: border-box;
+  
 }
 
 .search-container {
@@ -289,7 +290,9 @@ const goHome = () => {
 .custom-tabs {
   background: transparent !important;
 }
-
+.btn-center{
+  margin: auto;
+}
 .custom-tabs .v-tab {
   color: #555;
   background-color: transparent !important;
@@ -310,9 +313,11 @@ const goHome = () => {
 }
 
 .custom-toggle {
-  padding: 6px 12px;
-  border-radius: 8px;
-  display: inline-flex;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px;
 }
 
 .custom-tab-btn {
@@ -322,6 +327,24 @@ const goHome = () => {
   border: 1px solid #d0d5dd;
   color: #333;
   text-transform: none;
+  border-radius: 8px;
+  padding: 0 12px;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+
+.custom-tab-btn:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.active-tab {
+  background-color: #1740C2;
+  color: white;
+}
+
+.custom-tab-btn:last-child {
+  margin-right: 0; /* 마지막 버튼 오른쪽 여백 제거 */
 }
 
 .custom-tab-btn.v-btn--active {
@@ -333,5 +356,4 @@ const goHome = () => {
 .v-footer {
   flex:block;
 }
-
 </style>
