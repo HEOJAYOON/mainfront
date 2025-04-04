@@ -1,137 +1,139 @@
 <template>
-  <v-app>
-    <div class="background-container">
-      <Header
-        :toggleMarketPlace="ui.toggleMarketPlace"
-        :toggleGuide="ui.toggleGuide"
-        :goHome="goHome"
-        :scrollToPlatformSection="ui.scrollToPlatformSection"
-        :isMarketPlaceActive="ui.isMarketPlaceActive"
-        :isGuideActive="ui.isGuideActive"
-        :isPlatformActive="ui.isPlatformActive"
-      />
+  <ClientOnly>
+    <v-app>
+      <div class="background-container">
+        <Header
+          :toggleMarketPlace="ui.toggleMarketPlace"
+          :toggleGuide="ui.toggleGuide"
+          :goHome="goHome"
+          :scrollToPlatformSection="ui.scrollToPlatformSection"
+          :isMarketPlaceActive="ui.isMarketPlaceActive"
+          :isGuideActive="ui.isGuideActive"
+          :isPlatformActive="ui.isPlatformActive"
+        />
 
-      <div v-if="!ui.isMarketPlaceActive && !ui.isGuideActive" class="main-container">
-        <v-container>
-          <h1 class="text-center">고객센터</h1>
+        <div v-if="!ui.isMarketPlaceActive && !ui.isGuideActive" class="main-container">
+          <v-container>
+            <h1 class="text-center">고객센터</h1>
 
-          <!-- 공통 검색창 -->
-          <div class="search-container">
-            <v-text-field
-              v-model="globalSearchQuery"
-              label="제목으로 검색"
-              append-icon="mdi-magnify"
-              clearable
-              density="compact"
-              hide-details
-            />
-          </div>
-
-          <!-- 검색어 있을 때 통합 결과 -->
-          <template v-if="globalSearchQuery">
-            <div class="text-center font-weight-medium my-4">
-              <span>
-                <strong>‘{{ globalSearchQuery }}’</strong>로 검색한 결과
-                <strong>{{ combinedList.length }}</strong>건
-              </span>
+            <!-- 공통 검색창 -->
+            <div class="search-container">
+              <v-text-field
+                v-model="globalSearchQuery"
+                label="제목으로 검색"
+                append-icon="mdi-magnify"
+                clearable
+                density="compact"
+                hide-details
+              />
             </div>
-            <v-expansion-panels multiple>
-              <v-expansion-panel
-                v-for="(item, index) in pagedCombinedList"
-                :key="index"
-              >
-                <v-expansion-panel-title>
-                  <div class="d-flex justify-space-between w-100">
-                    <small>{{ item.type }}</small>
-                    <span>{{ item.title }}</span>
-                    <small>{{ formatDate(item.regDate) }} / 조회수 {{ item.viewCnt }}</small>
-                  </div>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <div v-html="item.content" class="pa-4" />
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
-            <v-pagination v-model="combinedPage" :length="totalCombinedPages" class="mt-8" />
-          </template>
 
-          <!-- 검색어 없을 때 탭 구분 -->
-          <template v-else>
-            <v-tabs v-model="mainTab" class="custom-tabs" fixed-tabs>
-              <v-tab value="notice">공지사항</v-tab>
-              <v-tab value="support">자주 묻는 질문</v-tab>
-            </v-tabs>
-
-            <v-window v-model="mainTab">
-              <!-- 공지사항 탭 -->
-              <v-window-item value="notice">
-                <v-expansion-panels multiple>
-                  <v-expansion-panel
-                    v-for="(item, index) in pagedNotices"
-                    :key="item.id"
-                  >
-                    <v-expansion-panel-title>
-                      <div class="d-flex justify-space-between w-100">
-                        <small>{{ totalFiltered - ((page - 1) * pageSize + index) }}</small>
-                        <span>{{ item.title }}</span>
-                        <small>{{ formatDate(item.regDate) }} | 조회수 {{ item.viewCnt }}</small>
-                      </div>
-                    </v-expansion-panel-title>
-                    <v-expansion-panel-text>
-                      <div v-html="item.content" class="pa-4" />
-                    </v-expansion-panel-text>
-                  </v-expansion-panel>
-                </v-expansion-panels>
-                <v-pagination v-model="page" :length="totalPages" class="mt-8" />
-              </v-window-item>
-
-              <!-- 고객센터 탭 -->
-              <v-window-item value="support">
-              <!-- 버튼 필터 -->
-              <div class="custom-toggle">
-                <v-btn
-                  v-for="tab in supportTabs"
-                  :key="tab"
-                  @click="supportTab = tab"
-                  :class="['custom-tab-btn', { 'active-tab': supportTab === tab }]"
-                >
-                  {{ tab }}
-                </v-btn>
+            <!-- 검색어 있을 때 통합 결과 -->
+            <template v-if="globalSearchQuery">
+              <div class="text-center font-weight-medium my-4">
+                <span>
+                  <strong>‘{{ globalSearchQuery }}’</strong>로 검색한 결과
+                  <strong>{{ combinedList.length }}</strong>건
+                </span>
               </div>
+              <v-expansion-panels multiple>
+                <v-expansion-panel
+                  v-for="(item, index) in pagedCombinedList"
+                  :key="index"
+                >
+                  <v-expansion-panel-title>
+                    <div class="d-flex justify-space-between w-100">
+                      <small>{{ item.type }}</small>
+                      <span>{{ item.title }}</span>
+                      <small>{{ formatDate(item.regDate) }} / 조회수 {{ item.viewCnt }}</small>
+                    </div>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
+                    <div v-html="item.content" class="pa-4" />
+                  </v-expansion-panel-text>
+                </v-expansion-panel>
+              </v-expansion-panels>
+              <v-pagination v-model="combinedPage" :length="totalCombinedPages" class="mt-8" />
+            </template>
 
-                <!-- 리스트 -->
-                <v-expansion-panels multiple>
-                  <v-expansion-panel
-                    v-for="item in pagedSupport"
-                    :key="item.bid"
+            <!-- 검색어 없을 때 탭 구분 -->
+            <template v-else>
+              <v-tabs v-model="mainTab" class="custom-tabs" fixed-tabs>
+                <v-tab value="notice">공지사항</v-tab>
+                <v-tab value="support">자주 묻는 질문</v-tab>
+              </v-tabs>
+
+              <v-window v-model="mainTab">
+                <!-- 공지사항 탭 -->
+                <v-window-item value="notice">
+                  <v-expansion-panels multiple>
+                    <v-expansion-panel
+                      v-for="(item, index) in pagedNotices"
+                      :key="item.id"
+                    >
+                      <v-expansion-panel-title>
+                        <div class="d-flex justify-space-between w-100">
+                          <small>{{ totalFiltered - ((page - 1) * pageSize + index) }}</small>
+                          <span>{{ item.title }}</span>
+                          <small>{{ formatDate(item.regDate) }} | 조회수 {{ item.viewCnt }}</small>
+                        </div>
+                      </v-expansion-panel-title>
+                      <v-expansion-panel-text>
+                        <div v-html="item.content" class="pa-4" />
+                      </v-expansion-panel-text>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+                  <v-pagination v-model="page" :length="totalPages" class="mt-8" />
+                </v-window-item>
+
+                <!-- 고객센터 탭 -->
+                <v-window-item value="support">
+                <!-- 버튼 필터 -->
+                <div class="custom-toggle">
+                  <v-btn
+                    v-for="tab in supportTabs"
+                    :key="tab"
+                    @click="supportTab = tab"
+                    :class="['custom-tab-btn', { 'active-tab': supportTab === tab }]"
                   >
-                    <v-expansion-panel-title>
-                      <div class="d-flex justify-space-between w-100">
-                        <small>Q</small>
-                        <span>{{ item.title }}</span>
-                        <small>{{ formatDate(item.regDate) }} | 조회수 {{ item.viewCnt }}</small>
-                      </div>
-                    </v-expansion-panel-title>
-                    <v-expansion-panel-text>A 
-                      <div v-html="item.content" class="pa-4" />
-                    </v-expansion-panel-text>
-                  </v-expansion-panel>
-                </v-expansion-panels>
-
-                <!-- 빈 리스트 처리 -->
-                <div v-if="pagedSupport.length === 0" class="text-center mt-6">
-                  표시할 내용이 없습니다.
+                    {{ tab }}
+                  </v-btn>
                 </div>
-                <!-- 페이징 -->
-                <v-pagination v-model="supportPage" :length="totalSupportPages" class="mt-8" />
-              </v-window-item>
-            </v-window>
-          </template>
-        </v-container>
+
+                  <!-- 리스트 -->
+                  <v-expansion-panels multiple>
+                    <v-expansion-panel
+                      v-for="item in pagedSupport"
+                      :key="item.bid"
+                    >
+                      <v-expansion-panel-title>
+                        <div class="d-flex justify-space-between w-100">
+                          <small>Q</small>
+                          <span>{{ item.title }}</span>
+                          <small>{{ formatDate(item.regDate) }} | 조회수 {{ item.viewCnt }}</small>
+                        </div>
+                      </v-expansion-panel-title>
+                      <v-expansion-panel-text>A 
+                        <div v-html="item.content" class="pa-4" />
+                      </v-expansion-panel-text>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+
+                  <!-- 빈 리스트 처리 -->
+                  <div v-if="pagedSupport.length === 0" class="text-center mt-6">
+                    표시할 내용이 없습니다.
+                  </div>
+                  <!-- 페이징 -->
+                  <v-pagination v-model="supportPage" :length="totalSupportPages" class="mt-8" />
+                </v-window-item>
+              </v-window>
+            </template>
+          </v-container>
+        </div>
+        <LazyFooter class="footer-fixed" />
       </div>
-      <LazyFooter class="footer-fixed" />
-    </div>
-  </v-app>
+    </v-app>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
